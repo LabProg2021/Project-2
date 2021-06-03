@@ -1,12 +1,28 @@
 int getKey(unsigned char *word, int i) {
 	switch (word[i]) {
 		case 195:
-			if(word[i+1] >= 128 && word[i+1] <= 131) {
+			if(word[i+1] >= 128 && word[i+1] <= 131) { // 'A' acentuados
 				return 2;
-			} else if(word[i+1] >= 160 && word[i+1] <= 163) {
+			} else if(word[i+1] >= 160 && word[i+1] <= 163) { // 'a' acentuados
 				return 2;
-			} else if(word[i+1] == 167 || word[i+1] == 135) {
+			} else if(word[i+1] == 167 || word[i+1] == 135) { // 'ç' e 'Ç'
 				return 2;
+			} else if(word[i+1] >= 136 && word[i+1] <= 138) { // 'E' acentuados
+				return 3;
+			} else if(word[i+1] >= 140 && word[i+1] <= 142) { // 'I' acentuados
+				return 4;
+			} else if(word[i+1] >= 146 && word[i+1] <= 148) { // 'O' acentuados
+				return 6;
+			} else if(word[i+1] >= 153 && word[i+1] <= 155) { // 'U' acentuados
+				return 8;
+			} else if(word[i+1] >= 168 && word[i+1] <= 170) { // 'e' acentuados
+				return 3;
+			} else if(word[i+1] >= 172 && word[i+1] <= 174) { // 'i' acentuados
+				return 4;
+			} else if(word[i+1] >= 178 && word[i+1] <= 181) { // 'o' acentuados
+				return 6;
+			} else if(word[i+1] >= 185 && word[i+1] <= 187) { // 'u' acentuados
+				return 8;
 			} else {
 				return (-1);
 			}

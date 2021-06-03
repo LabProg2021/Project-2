@@ -15,40 +15,49 @@ int z = 0;
 
 GDateTime *LastPressed = NULL;
 
+int getDigit(const char* str) {
+	int i = 0;
+	while(isdigit(str[i]) == 0 || str[i] == '\0') {
+		i++;
+	}
+	if(str[i] == '\0') return (-1);
+	return (str[i] - '0');
+}
+
 void button_clicked(GtkButton *button, gpointer data) {
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbutton))) {
 		//Modo com algoritmo de previsão T9
-		z = (z * 10) + gtk_button_get_label(button)[0] - '0';
+		z = (z * 10) + getDigit(gtk_button_get_label(button));
 		strcpy((char*)caption, (char*)searchWord(z));
 	} else {
 		//Modo manual
-		switch(gtk_button_get_label(button)[0]) {
-			case '2':
-				strcpy((char*) button_str, "abc2àáãâçABCÀÁÃÂÇ");
+		switch(getDigit(gtk_button_get_label(button))) {
+			case 2:
+				strcpy((char*) button_str, "abcàáãâçABCÀÁÃÂÇ2");
 				break;
-			case '3':
-				strcpy((char*) button_str, "def3");
+			case 3:
+				strcpy((char*) button_str, "defèéêDEFÈÉÊ3");
 				break;
-			case '4':
-				strcpy((char*) button_str, "ghi4");
+			case 4:
+				strcpy((char*) button_str, "ghiíìîGHIÌÍÎ4");
 				break;
-			case '5':
-				strcpy((char*) button_str, "jkl5");
+			case 5:
+				strcpy((char*) button_str, "jklJKL5");
 				break;
-			case '6':
-				strcpy((char*) button_str, "mno6");
+			case 6:
+				strcpy((char*) button_str, "mnoòóõôMNOÒÓÕÔ6");
 				break;
-			case '7':
-				strcpy((char*) button_str, "pqrs7");
+			case 7:
+				strcpy((char*) button_str, "pqrsPQRS7");
 				break;
-			case '8':
-				strcpy((char*) button_str, "tuv8");
+			case 8:
+				strcpy((char*) button_str, "tuvùúûTUVÙÚÛ8");
 				break;
-			case '9':
-				strcpy((char*) button_str, "wxyz9");
+			case 9:
+				strcpy((char*) button_str, "wxyzWXYZ9");
 				break;
-			case '0':
+			case 0:
 				strcpy((char*) button_str, " ");
 				z = 0;
 				break;
@@ -94,10 +103,10 @@ void ui(int argc, char *argv[]) {
 	gtk_init(&argc, &argv);
 
 	gchar *values[12] = {
-		"1\n", "2\nabc", "3\ndef",
-		"4\nghi", "5\njkl", "6\nmno",
-		"7\npqrs", "8\ntuv", "9\nwxyz",
-		"*\n", "0\n", "#\n"
+		"1\n∞", " 2\nabc", " 3\ndef",
+		" 4\nghi", " 5\njkl", " 6\nmno",
+		"  7\npqrs", " 8\ntuv", "  9\nwxyz",
+		"*\n", "    0\nspace", "#\n"
 	};
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
