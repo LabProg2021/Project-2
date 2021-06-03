@@ -83,9 +83,9 @@ int getKey(unsigned char *word, int i) {
 	}
 }
 
-int getIndex(unsigned char *word) {
+unsigned long getIndex(unsigned char *word) {
 	int i = 0;
-	int n = 0;
+	unsigned long n = 0;
 	while(word[i] != '\0') {
 		n = (n*10) + getKey(word, i);
 		i++;
@@ -94,7 +94,7 @@ int getIndex(unsigned char *word) {
 	return n;
 }
 
-Word *createWord(int index, unsigned char *word) {
+Word *createWord(unsigned long index, unsigned char *word) {
 	Word *newWord = (Word*)malloc(sizeof(Word));
 
 	newWord->index = index;
@@ -113,7 +113,7 @@ void initializeTable() {
     }
 }
 
-int hash(int x) {
+int hash(unsigned long x) {
 	int h;
 	while(x>9999) {
 		x /= 10;
@@ -182,10 +182,10 @@ void readFile(char *filename) {
 	FILE *fp = fopen(filename, "r");
 	if(fp == NULL) return;
 
-	char temp[70];
-	unsigned char word[40];
+	char temp[100];
+	unsigned char word[50];
 	
-	while(fgets(temp, 60, fp)) {
+	while(fgets(temp, 100, fp)) {
 		if(temp[strlen(temp)-1] == '\n') {
 			temp[strlen(temp)-1] = '\0';
 		}
@@ -194,10 +194,10 @@ void readFile(char *filename) {
 		//printf("\ntemp: %s\n", temp);
 		while(temp[max((i-1), 0)] != '\0') {
 			//printf("temp[i]='%c' ", temp[i]);
-			if(temp[i] == '\0' || isdigit(temp[i]) || temp[i] == ' ' || temp[i] == ',' || temp[i] == '(' || temp[i] == ')' || temp[i] == ';' || temp[i] == ':' || temp[i] == '.' || temp[i] == '"') {
+			if(temp[i] == '\0' || isdigit(temp[i]) || temp[i] == ' ' || temp[i] == ',' || temp[i] == '(' || temp[i] == ')' || temp[i] == ';' || temp[i] == ':' || temp[i] == '.' || temp[i] == '"' || temp[i] == '-') {
 				if(strlen((char*) word) != 0) {
-					//printf("\n%d", getIndex(word));
-					//printf("\nword: '%s'\n", word);
+					//printf("\n%ld", getIndex(word));
+					printf("\nword: '%s'\n", word);
 					insertTable(createWord(getIndex(word), word));
 				}
 				word[0] = '\0';
@@ -226,7 +226,7 @@ unsigned char *searchWord(int x) {
 
 void printList(List list) {
     while(list != NULL) {
-        printf("%s %d %d\n", list->word->str, list->word->count, list->word->index);
+        printf("%s %d %ld\n", list->word->str, list->word->count, list->word->index);
         list = list->next;
     }
 }

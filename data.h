@@ -1,7 +1,7 @@
 #define M 10007
 
 typedef struct {
-	int index;
+	unsigned long index;
 	unsigned char *str;
 	int count;
 } Word;
@@ -16,15 +16,15 @@ List *table;
 
 int getKey(unsigned char *word, int i);
 
-int getIndex(unsigned char *word);
+unsigned long getIndex(unsigned char *word);
 
-Word *createWord(int index, unsigned char *word);
+Word *createWord(unsigned long index, unsigned char *word);
 
 List createList();
 
 void initializeTable();
 
-int hash(int x);
+int hash(unsigned long x);
 
 void listSort(List list);
 

@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
 
 	initializeTable();
 
-	readFile("test.txt");
+	readFile("lusiadas.txt");
 
 	/*int i = 0;
 	while(i<(M-1)) {
