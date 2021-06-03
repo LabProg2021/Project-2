@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
 	readFile("lusiadas.txt");
 
-	/*int i = 0;
+	int i = 0;
 	while(i<(M-1)) {
 		if(table[i] != NULL) {
 			printList(table[i]);
@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 		}
 		i++;
 	}
-	printf("\n");*/
+	printf("\n");
 
 	ui(argc, argv);
 

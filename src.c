@@ -194,10 +194,10 @@ void readFile(char *filename) {
 		//printf("\ntemp: %s\n", temp);
 		while(temp[max((i-1), 0)] != '\0') {
 			//printf("temp[i]='%c' ", temp[i]);
-			if(temp[i] == '\0' || isdigit(temp[i]) || temp[i] == ' ' || temp[i] == ',' || temp[i] == '(' || temp[i] == ')' || temp[i] == ';' || temp[i] == ':' || temp[i] == '.' || temp[i] == '"' || temp[i] == '-') {
+			if(temp[i] == '\0' || isdigit(temp[i]) || temp[i] == ' ' || temp[i] == ',' || temp[i] == '(' || temp[i] == ')' || temp[i] == ';' || temp[i] == ':' || temp[i] == '.' || temp[i] == '"' || temp[i] == '-' || temp[i] == '?') {
 				if(strlen((char*) word) != 0) {
 					//printf("\n%ld", getIndex(word));
-					printf("\nword: '%s'\n", word);
+					//printf("\nword: '%s'\n", word);
 					insertTable(createWord(getIndex(word), word));
 				}
 				word[0] = '\0';
