@@ -266,19 +266,103 @@ void readFile(char *filename1, char *filename2) {
 	fclose(fp);
 }
 
-unsigned char *searchWord(int x) {
+int strLen(unsigned char* str) {
+	int i = 0;
+	int count = 0;
+	while(str[i] != '\0') {
+		if(str[i] == 195) {
+			g_print("195_str[%d]: %u ", i, str[i]);
+			i++;
+		}
+		//g_print("str[%d]: %c ", i, str[i]);
+		count++;
+		i++;
+	}
+	//g_print("count: %d\n", count);
+	return count;
+}
+
+int digitCount(int x) {
+	int count = 0;
+	while(x != 0) {
+		x /= 10;
+		count++;
+	}
+	return count;
+}
+
+int searchWord(unsigned char* str, int x, int *x2) {
     int h = hash(x);
 
-    if(table[h] == NULL) {
-		return NULL;
-	}
+    List find = table[h];
+    if(contador == 0) {
+    	if(find != NULL) {
+    		if(x > 9999) {
+    			for (find = table[h]; find != NULL; find = find->next) {
+		            if(find->word->index == x) {
+		            	strcpy((char*)str, (char*)(find->word->str));
+		            	x2++;
+		                return 1;
+		            }
+		        }
+    		}
+	    	unsigned char *temp = find->word->str;
+	    	g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", temp, strLen(temp), digitCount(x), x);
+	    	while(strLen(temp) > digitCount(x)) {
+	    		g_print("temp--\n");
+	    		if(temp[strlen((char*)temp)-2] == 195) {
+	    			temp[strlen((char*)temp)-2] = '\0';
+	    			temp[strlen((char*)temp)-1] = '\0';
+	    		} else {
+	    			temp[strlen((char*)temp)-1] = '\0';
+	    		}
+	    	}
+	    	strcpy((char*)str, (char*)temp);
+	    	x2++;
+	    	g_print("temp_final: %s\n", temp);
+	    	return 1;
+	    }
+    } else if(contador > 0) {
+        for (find = table[h]; find != NULL; find = find->next) {
+            if (find->word->index == x && contador > 0) {
+                contador--;
+            } else if (find->word->index == x && contador == 0) {
+            	strcpy((char*)str, (char*)(find->word->str));
+            	x2++;
+                return 1;
+            }
+        }
+    }
+    g_print("table[%d] = NULL\n", h);
+    return 0;
+
+
+
+
+    /*List find;
+    if(contador == 0) {
+        for (find = table[h]; find != NULL; find = find->next) {
+            if(find->word->index == x) {
+            	strcpy((char*)str, (char*)(find->word->str));
+                return 1;
+            }
+        }
+    } else if(contador > 0) {
+        find = table[h];
+        for (find = table[h]; find != NULL; find = find->next) {
+            if (find->word->index == x && contador > 0) {
+                contador--;
+            } else if (find->word->index == x && contador == 0) {
+            	strcpy((char*)str, (char*)(find->word->str));
+                return 1;
+            }
+        }
+    }
+    return 0;*/
 
 
 
     /*if(x <= 9999) {
-    	if(table[h] == NULL) {
-    		return ((unsigned char *)"END");
-    	}
         List find;
         if(contador == 0 ) {
             return (table[h]->word->str);
@@ -314,7 +398,6 @@ unsigned char *searchWord(int x) {
             }
         }
     }*/
-    return ((unsigned char *)"END");
 }
 
 void saveFile() {

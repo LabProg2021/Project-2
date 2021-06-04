@@ -7,11 +7,14 @@ GtkWidget *hbox;
 GtkWidget *cbutton;
 
 unsigned char button_str[30]= "";
-unsigned char caption[30]= "";
+unsigned char caption[150]= "";
+unsigned char t9_str[35]= "";
 
-int x = 0;
+int x1 = 0;
+int x2 = 0;
 int y = 0;
 int z = 0;
+int ytemp = 0;
 
 GDateTime *LastPressed = NULL;
 
@@ -28,16 +31,44 @@ void button_clicked(GtkButton *button, gpointer data) {
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbutton))) {
 		//Modo com algoritmo de previsão T9
-		if(getDigit(gtk_button_get_label(button)) == 1) {
-			contador++;
+		if(getDigit(gtk_button_get_label(button)) == 0) {
+			z = 0;
+			t9_str[0] = '\0';
+			caption[y++] = ' ';
+			ytemp = y;
+		} else if(gtk_button_get_label(button)[0] == '<') {
+			z /= 10;
+			if(x2 > 0) x2--;
+			//t9_str[x2] = '\0';
+			y--;
+			g_print("%d\n", y);
+			caption[y] = '\0';
+			searchWord(t9_str, z, &x2);
+		} else {
+			if(getDigit(gtk_button_get_label(button)) == 1) {
+				contador++;
+			}
+			
+			z = (z * 10) + getDigit(gtk_button_get_label(button));
+			searchWord(t9_str, z, &x2);
 		}
-		
-		z = (z * 10) + getDigit(gtk_button_get_label(button));
-		unsigned char* temp = searchWord(z);
-		if(temp != NULL) {
-			g_print("temp != NULL");
-			strcpy((char*)caption, (char*) temp);
+
+		y = ytemp;
+		while(t9_str[x2] != '\0') {
+			if(y>0 && caption[y-1]>192) {
+				caption[y--] = 0;
+				caption[y] = 0;
+			}
+			if(t9_str[x2] == 195) {
+				caption[y++] = t9_str[x2++];
+				caption[y] = t9_str[x2];
+			} else {
+				caption[y] = t9_str[x2];
+			}
+			y++;
+			x2++;
 		}
+		x2 = 0;
 	} else {
 		//Modo manual
 		if(gtk_button_get_label(button)[0] == '<') {
@@ -79,7 +110,6 @@ void button_clicked(GtkButton *button, gpointer data) {
 					break;
 				case 0:
 					strcpy((char*) button_str, " ");
-					z = 0;
 					break;
 				default:
 					break;
@@ -90,12 +120,12 @@ void button_clicked(GtkButton *button, gpointer data) {
 
 			if(LastPressed != NULL && (gtk_button_get_label(button)[0] != '<')) {
 				diff = g_date_time_difference(now, LastPressed);
-				if(diff<1000000 && button_str[x]==caption[y]) {
-					if(x<strlen((const char*) button_str)-1 && button_str[x]<128) x++;
-					else if(x<strlen((const char*) button_str)-2 && button_str[x]>127) x++;
-					else x=0;
+				if(diff<1000000 && button_str[x1]==caption[y]) {
+					if(x1<strlen((const char*) button_str)-1 && button_str[x1]<128) x1++;
+					else if(x1<strlen((const char*) button_str)-2 && button_str[x1]>127) x1++;
+					else x1=0;
 				} else {
-					x=0;
+					x1=0;
 					y++;
 				}
 			}
@@ -105,11 +135,11 @@ void button_clicked(GtkButton *button, gpointer data) {
 				caption[y--] = 0;
 				caption[y] = 0;
 			}
-			if(button_str[x]>127) {
-				caption[y++] = button_str[x++];
-				caption[y] = button_str[x];
+			if(button_str[x1]>127) {
+				caption[y++] = button_str[x1++];
+				caption[y] = button_str[x1];
 			} else {
-				caption[y] = button_str[x];
+				caption[y] = button_str[x1];
 			}
 
 			LastPressed = g_date_time_new_now_local();

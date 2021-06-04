@@ -1,3 +1,6 @@
+#ifndef DATA_H_INCLUDED
+#define DATA_H_INCLUDED
+
 #define M 10007
 
 typedef struct {
@@ -36,8 +39,10 @@ int max(int x, int y);
 
 void readFile(char *filename1, char *filename2);
 
-unsigned char *searchWord(int x);
+int searchWord(unsigned char* caption, int x, int *x2);
 
 int max(int x, int y);
 
 void printList(List list);
+
+#endif
