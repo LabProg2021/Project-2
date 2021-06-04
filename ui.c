@@ -9,12 +9,14 @@ GtkWidget *cbutton;
 unsigned char button_str[30]= "";
 unsigned char caption[150]= "";
 unsigned char t9_str[35]= "";
+unsigned char manual_str[35]= "";
 
 int x1 = 0;
 int x2 = 0;
 int y = 0;
 int z = 0;
 int ytemp = 0;
+int y2 = 0;
 
 GDateTime *LastPressed = NULL;
 
@@ -27,23 +29,47 @@ int getDigit(const char* str) {
 	return (str[i] - '0');
 }
 
+int deleteChar(unsigned char* str, int *x) {
+	g_print("%d\n", *x);
+	if(str == NULL) return 0;
+	if(x > 0) x--;
+	str[*x] = '\0';
+	if(str[*x-1] == 195) {
+		x--;
+		str[*x] = '\0';
+	}
+	return 1;
+}
+
 void button_clicked(GtkButton *button, gpointer data) {
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbutton))) {
 		//Modo com algoritmo de previsão T9
-		if(getDigit(gtk_button_get_label(button)) == 0) {
+		manual_str[0] = '\0';
+		if(gtk_button_get_label(button)[0] == '<') {
+			z /= 10;
+
+			if(x2 > 0) x2--;
+			t9_str[x2] = '\0';
+
+			if(y > 0) y--;
+			caption[y] = '\0';
+			if(caption[y-1] == 195) {
+				g_print("=195\n");
+				y--;
+				caption[y] = '\0';
+			}
+			g_print("%d\n", y);
+			//deleteChar(t9_str, &x2);
+			//deleteChar(caption, &y);
+
+			g_print("%s\n", caption);
+			searchWord(t9_str, z, &x2);
+		} else if(getDigit(gtk_button_get_label(button)) == 0) {
 			z = 0;
 			t9_str[0] = '\0';
 			caption[y++] = ' ';
 			ytemp = y;
-		} else if(gtk_button_get_label(button)[0] == '<') {
-			z /= 10;
-			if(x2 > 0) x2--;
-			//t9_str[x2] = '\0';
-			y--;
-			g_print("%d\n", y);
-			caption[y] = '\0';
-			searchWord(t9_str, z, &x2);
 		} else {
 			if(getDigit(gtk_button_get_label(button)) == 1) {
 				contador++;
@@ -71,6 +97,7 @@ void button_clicked(GtkButton *button, gpointer data) {
 		x2 = 0;
 	} else {
 		//Modo manual
+		t9_str[0] = '\0';
 		if(gtk_button_get_label(button)[0] == '<') {
 			if(caption[y-1] == 195) {
 				caption[y] = '\0';
@@ -78,8 +105,12 @@ void button_clicked(GtkButton *button, gpointer data) {
 			}
 			caption[y] = '\0';
 			if(y != -1) y--;
+		} else if(getDigit(gtk_button_get_label(button)) == 0) {
+			manual_str[0] = '\0';
+			caption[y++] = ' ';
+			ytemp = y;
 		} else if(gtk_button_get_label(button)[0] == '*') {
-			//incompleto
+			//if(strlen())
 		} else if(gtk_button_get_label(button)[0] == '#') {
 			//incompleto
 		} else if(getDigit(gtk_button_get_label(button)) != 1) {
@@ -129,18 +160,31 @@ void button_clicked(GtkButton *button, gpointer data) {
 					y++;
 				}
 			}
-			/*if(gtk_button_get_label(button)[0] == '<') {
-				caption[y--] = '\0';
-			} else*/ if(y>0 && caption[y-1]>192) {
+			if(y>0 && caption[y-1]>192) {
 				caption[y--] = 0;
 				caption[y] = 0;
 			}
+
 			if(button_str[x1]>127) {
 				caption[y++] = button_str[x1++];
 				caption[y] = button_str[x1];
 			} else {
 				caption[y] = button_str[x1];
 			}
+
+			/*if(button_str[x1]>127) {
+				manual_str[y2++] = button_str[x1++];
+				manual_str[y2] = button_str[x1];
+			} else {
+				manual_str[y2] = button_str[x1];
+			}
+
+			if(manual_str[x1]>127) {
+				caption[y++] = manual_str[x1++];
+				caption[y] = manual_str[x1];
+			} else {
+				caption[y] = manual_str[x1];
+			}*/
 
 			LastPressed = g_date_time_new_now_local();
 		}

@@ -298,10 +298,12 @@ int searchWord(unsigned char* str, int x, int *x2) {
     if(contador == 0) {
     	if(find != NULL) {
     		if(x > 9999) {
+    			g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", find->word->str, strLen(find->word->str), digitCount(x), x);
     			for (find = table[h]; find != NULL; find = find->next) {
 		            if(find->word->index == x) {
 		            	strcpy((char*)str, (char*)(find->word->str));
 		            	x2++;
+		            	//g_print("temp_final: %s\n", str);
 		                return 1;
 		            }
 		        }
@@ -309,7 +311,7 @@ int searchWord(unsigned char* str, int x, int *x2) {
 	    	unsigned char *temp = find->word->str;
 	    	g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", temp, strLen(temp), digitCount(x), x);
 	    	while(strLen(temp) > digitCount(x)) {
-	    		g_print("temp--\n");
+	    		//g_print("temp--\n");
 	    		if(temp[strlen((char*)temp)-2] == 195) {
 	    			temp[strlen((char*)temp)-2] = '\0';
 	    			temp[strlen((char*)temp)-1] = '\0';
@@ -319,7 +321,7 @@ int searchWord(unsigned char* str, int x, int *x2) {
 	    	}
 	    	strcpy((char*)str, (char*)temp);
 	    	x2++;
-	    	g_print("temp_final: %s\n", temp);
+	    	//g_print("temp_final: %s\n", temp);
 	    	return 1;
 	    }
     } else if(contador > 0) {
@@ -333,7 +335,7 @@ int searchWord(unsigned char* str, int x, int *x2) {
             }
         }
     }
-    g_print("table[%d] = NULL\n", h);
+    //g_print("table[%d] = NULL\n", h);
     return 0;
 
 
@@ -409,10 +411,9 @@ void saveFile() {
             file = table[h];
             while(file != NULL) {
                 while(file->word->count > 0) {
-                    fprintf(fp, "%s ", file->word->str);
+                    fprintf(fp, "%s\n", file->word->str);
                     file->word->count --;
                 }
-                fprintf(fp, "\n");
                 file = file->next;
             }
         }
