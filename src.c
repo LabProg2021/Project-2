@@ -1,3 +1,5 @@
+int contador = 0;
+
 int getKey(unsigned char *word, int i) {
 	switch (word[i]) {
 		case 195:
@@ -157,8 +159,39 @@ void deleteWord(Word *word) {
 	free(word);
 }
 
+int toLower(unsigned char* str) {
+	if(str[0] == 195) {
+		if(str[1] >= 128 && str[1] <= 131) { // 'A' acentuados
+			str[1] = 160 + (str[1]-128);
+			return 1;
+		} else if(str[1] == 135) { // 'Ç'
+			str[1] = 167;
+			return 1;
+		} else if(str[1] >= 136 && str[1] <= 138) { // 'E' acentuados
+			str[1] = 168 + (str[1]-136);
+			return 1;
+		} else if(str[1] >= 140 && str[1] <= 142) { // 'I' acentuados
+			str[1] = 172 + (str[1]-140);
+			return 1;
+		} else if(str[1] >= 146 && str[1] <= 148) { // 'O' acentuados
+			str[1] = 178 + (str[1]-146);
+			return 1;
+		} else if(str[1] >= 153 && str[1] <= 155) { // 'U' acentuados
+			str[1] = 185 + (str[1]-153);
+			return 1;
+		} else {
+			return 0;
+		}
+	} else {
+		str[0] = tolower(str[0]);
+		return 1;
+	}
+}
+
 void insertTable(Word *word) {
 	int h = hash(word->index);
+
+	toLower(word->str);
 
 	//printf("%d ", h);
 	List list;
@@ -210,7 +243,7 @@ void readFile(char *filename) {
 		//printf("\ntemp: %s\n", temp);
 		while(temp[max((i-1), 0)] != '\0') {
 			//printf("temp[i]='%c' ", temp[i]);
-			if(temp[i] == '\0' || isdigit(temp[i]) || temp[i] == ' ' || temp[i] == ',' || temp[i] == '(' || temp[i] == ')' || temp[i] == ';' || temp[i] == ':' || temp[i] == '.' || temp[i] == '"' || temp[i] == '-' || temp[i] == '?') {
+			if(temp[i] == '\0' || isdigit(temp[i]) || temp[i] == ' ' || temp[i] == ',' || temp[i] == '(' || temp[i] == ')' || temp[i] == ';' || temp[i] == ':' || temp[i] == '.' || temp[i] == '"' || temp[i] == '-' || temp[i] == '?' || temp[i] == '!' || temp[i] == '\'') {
 				if(strlen((char*) word) != 0) {
 					//printf("\n%ld", getIndex(word));
 					//printf("\nword: '%s'\n", word);
@@ -231,13 +264,63 @@ void readFile(char *filename) {
 }
 
 unsigned char *searchWord(int x) {
-	int h = hash(x);
+    int h = hash(x);
 
-	if(x<10) {
-		return (table[h]->word->str);
-	}
+    if(x <= 9999) {
+    	if(table[h] == NULL) {
+    		return ((unsigned char *)"END");
+    	}
+        List find;
+        if(contador == 0 ) {
+            return (table[h]->word->str);
+        } else if(contador > 0) {
+            find = table[h];
+            while (contador > 0) {
+                if (find == NULL) {
+                    contador = 0;
+                    return ((unsigned char *)"END");
+                } else {
+                    contador--;
+                }
+                find = find->next;
+            }
+            return (find->word->str);
+        }
+    } else if(x > 9999) {
+        List find;
+        if(contador == 0) {
+            for (find = table[h]; find != NULL; find = find->next) {
+                if(find->word->index == x) {
+                    return (find->word->str);
+                }
+            }
+        } else if(contador > 0) {
+            find = table[h];
+            for (find = table[h]; find != NULL; find = find->next) {
+                if (find->word->index == x && contador > 0) {
+                    contador--;
+                } else if (find->word->index == x && contador == 0) {
+                    return (find->word->str);
+                }
+            }
+        }
+    }
+    return ((unsigned char *)"END");
+}
 
-	return ((unsigned char*)"teste");
+void saveFile() {
+    setlocale(P_ALL, "pt_PT.UTF-8");
+    FILE *fp = fopen("file.txt", "w");
+    List file;
+    for (int h = 1; h < (M - 1); h++) {
+        if(table[h] != NULL) {
+            file = table[h];
+            while(file != NULL) {
+                fprintf(fp, "%s %d %ld\n", file->word->str, file->word->count, file->word->index);
+                file = file->next;
+            }
+        }
+    }
 }
 
 void printList(List list) {
