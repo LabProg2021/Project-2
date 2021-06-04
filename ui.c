@@ -31,9 +31,13 @@ void button_clicked(GtkButton *button, gpointer data) {
 		if(getDigit(gtk_button_get_label(button)) == 1) {
 			contador++;
 		}
+		
 		z = (z * 10) + getDigit(gtk_button_get_label(button));
-
-		strcpy((char*)caption, (char*)searchWord(z));
+		unsigned char* temp = searchWord(z);
+		if(temp != NULL) {
+			g_print("temp != NULL");
+			strcpy((char*)caption, (char*) temp);
+		}
 	} else {
 		//Modo manual
 		if(gtk_button_get_label(button)[0] == '<') {

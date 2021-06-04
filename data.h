@@ -34,7 +34,7 @@ void insertTable(Word *word);
 
 int max(int x, int y);
 
-void readFile(char *fp);
+void readFile(char *filename1, char *filename2);
 
 unsigned char *searchWord(int x);
 

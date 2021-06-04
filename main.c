@@ -9,9 +9,9 @@ int main(int argc, char *argv[]) {
 
 	initializeTable();
 
-	readFile("lusiadas.txt");
+	readFile("cache.txt", "lusiadas.txt");
 
-	/*//print de teste
+	//print de teste
 	int i = 0;
 	while(i<(M-1)) {
 		if(table[i] != NULL) {
@@ -21,8 +21,10 @@ int main(int argc, char *argv[]) {
 		i++;
 	}
 	printf("\n");
-	//printList(table[3]);
-	//*/
+	printList(table[7]);
+	printList(table[9]);
+	printList(table[5]);
+	//
 
 	ui(argc, argv);
 

@@ -227,9 +227,12 @@ int max(int x, int y) {
 	else return y;
 }
 
-void readFile(char *filename) {
-	FILE *fp = fopen(filename, "r");
-	if(fp == NULL) return;
+void readFile(char *filename1, char *filename2) {
+	FILE *fp = fopen(filename1, "r");
+	if(fp == NULL) {
+		fp = fopen(filename2, "r");
+		if(fp == NULL) return;
+	}
 
 	char temp[100];
 	unsigned char word[50];
@@ -266,7 +269,13 @@ void readFile(char *filename) {
 unsigned char *searchWord(int x) {
     int h = hash(x);
 
-    if(x <= 9999) {
+    if(table[h] == NULL) {
+		return NULL;
+	}
+
+
+
+    /*if(x <= 9999) {
     	if(table[h] == NULL) {
     		return ((unsigned char *)"END");
     	}
@@ -304,19 +313,23 @@ unsigned char *searchWord(int x) {
                 }
             }
         }
-    }
+    }*/
     return ((unsigned char *)"END");
 }
 
 void saveFile() {
     setlocale(P_ALL, "pt_PT.UTF-8");
-    FILE *fp = fopen("file.txt", "w");
+    FILE *fp = fopen("cache.txt", "w");
     List file;
     for (int h = 1; h < (M - 1); h++) {
         if(table[h] != NULL) {
             file = table[h];
             while(file != NULL) {
-                fprintf(fp, "%s %d %ld\n", file->word->str, file->word->count, file->word->index);
+                while(file->word->count > 0) {
+                    fprintf(fp, "%s ", file->word->str);
+                    file->word->count --;
+                }
+                fprintf(fp, "\n");
                 file = file->next;
             }
         }
