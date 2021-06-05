@@ -29,7 +29,7 @@ int getDigit(const char* str) {
 	return (str[i] - '0');
 }
 
-int deleteChar(unsigned char* str, int *x) {
+/*int deleteChar(unsigned char* str, int *x) {
 	g_print("%d\n", *x);
 	if(str == NULL) return 0;
 	if(x > 0) x--;
@@ -39,7 +39,7 @@ int deleteChar(unsigned char* str, int *x) {
 		str[*x] = '\0';
 	}
 	return 1;
-}
+}*/
 
 void button_clicked(GtkButton *button, gpointer data) {
 
@@ -47,6 +47,7 @@ void button_clicked(GtkButton *button, gpointer data) {
 		//Modo com algoritmo de previsão T9
 		manual_str[0] = '\0';
 		if(gtk_button_get_label(button)[0] == '<') {
+			g_print("BACKSPACE\n");
 			z /= 10;
 
 			if(x2 > 0) x2--;
@@ -64,18 +65,20 @@ void button_clicked(GtkButton *button, gpointer data) {
 			//deleteChar(caption, &y);
 
 			g_print("%s\n", caption);
-			searchWord(t9_str, z, &x2);
+			searchWord(t9_str, z);
 		} else if(getDigit(gtk_button_get_label(button)) == 0) {
 			z = 0;
+			x2 = 0;
 			t9_str[0] = '\0';
 			caption[y++] = ' ';
 			ytemp = y;
 		} else if(getDigit(gtk_button_get_label(button)) == 1) {
 			contador++;
-			searchWord(t9_str, z, &x2);
+			searchWord(t9_str, z);
 		} else {			
 			z = (z * 10) + getDigit(gtk_button_get_label(button));
-			searchWord(t9_str, z, &x2);
+			searchWord(t9_str, z);
+			g_print("x2_search_end: %d\n", x2);
 		}
 
 		y = ytemp;
@@ -93,6 +96,7 @@ void button_clicked(GtkButton *button, gpointer data) {
 			y++;
 			x2++;
 		}
+		g_print("x2: %d\n", x2);
 		x2 = 0;
 	} else {
 		//Modo manual

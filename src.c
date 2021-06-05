@@ -275,15 +275,53 @@ int digitCount(int x) {
 	return count;
 }
 
-int searchWord(unsigned char* str, int x, int *x2) {
+int searchWord(unsigned char* str, int x) {
     int h = hash(x);
 
     List list = table[h];
-	if(list != NULL) {
+    if(list == NULL) {
+    	int temp = strlen((char*)str);
+    	if(temp > 0) {
+    		int y = 1;
+    		List cache = table[h];
+    		while(1) {
+    			if(y>9) {
+    				if(cache == NULL) {
+    					x *= 10;
+    					y = 0;
+    				}
+    				break;
+    			}
+    			h = hash(x*10+y);
+    			if(table[h] != NULL) {
+    				if(cache != NULL) {
+    					if((table[h]->word->count) > (cache->word->count)) {
+	    					cache = table[h];
+    					}
+    				} else {
+    					cache = table[h];
+    				}
+
+    			}
+    			y++;
+    		}
+    		strcpy((char*)str, (char*)(cache->word->str));
+	    	
+	    	while(strLen(str) > digitCount(x)) {
+	    		if(str[strlen((char*)str)-2] == 195) {
+	    			str[strlen((char*)str)-2] = '\0';
+	    			str[strlen((char*)str)-1] = '\0';
+	    		} else {
+	    			str[strlen((char*)str)-1] = '\0';
+	    		}
+	    	}
+    	} else {
+    		g_print("Nothing to show.\n");
+    	}
+    } else {
 		while(contador > 0) {
 			if(list->next == NULL) {
 				str[0] = '\0';
-				x2 = 0;
 				contador = 0;
 				return 0;
 			} else {
@@ -296,7 +334,6 @@ int searchWord(unsigned char* str, int x, int *x2) {
 			for (list = table[h]; list != NULL; list = list->next) {
 	            if(list->word->index == x) {
 	            	strcpy((char*)str, (char*)(list->word->str));
-	            	x2++;
 	            	//g_print("temp_final: %s\n", str);
 	            	//g_print("list->word->str: %s\n", list->word->str);
 	                return 1;
@@ -318,7 +355,6 @@ int searchWord(unsigned char* str, int x, int *x2) {
 	    		}
 	    	}
 	    	strcpy((char*)str, (char*)temp);
-	    	x2++;
 	    	//g_print("temp_final: %s\n", temp);
 	    	//g_print("list->word->str: %s\n", list->word->str);
 	    	free(temp);
