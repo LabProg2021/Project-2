@@ -9,7 +9,6 @@ GtkWidget *cbutton;
 unsigned char button_str[30]= "";
 unsigned char caption[150]= "";
 unsigned char t9_str[35]= "";
-unsigned char manual_str[35]= "";
 
 int x1 = 0;
 int x2 = 0;
@@ -29,33 +28,17 @@ int getDigit(const char* str) {
 	return (str[i] - '0');
 }
 
-/*int deleteChar(unsigned char* str, int *x) {
-	g_print("%d\n", *x);
-	if(str == NULL) return 0;
-	if(x > 0) x--;
-	str[*x] = '\0';
-	if(str[*x-1] == 195) {
-		x--;
-		str[*x] = '\0';
-	}
-	return 1;
-}*/
-
 void button_clicked(GtkButton *button, gpointer data) {
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(cbutton))) {
 		//Modo com algoritmo de previsão T9
-		manual_str[0] = '\0';
 		if(gtk_button_get_label(button)[0] == '<') {
-			g_print("BACKSPACE\n");
-			g_print("y: %d\n", y);
 			z /= 10;
 			contador = 0;
 
 			if(y > 0) y--;
 			caption[y] = '\0';
 			if(caption[y-1] == 195) {
-				g_print("=195\n");
 				y--;
 				caption[y] = '\0';
 			}
@@ -63,7 +46,6 @@ void button_clicked(GtkButton *button, gpointer data) {
 			int temp = strlen((char*)t9_str);
 			if(temp > 0) temp--;
 			t9_str[temp] = '\0';
-			g_print("y: %d\n", y);
 
 			searchWord(t9_str, z);
 			ytemp = y - strlen((char*)t9_str);
@@ -76,15 +58,7 @@ void button_clicked(GtkButton *button, gpointer data) {
 			ytemp = y;
 		} else if(getDigit(gtk_button_get_label(button)) == 1) {
 			contador++;
-			g_print("CYCLING -> listSize: %d || contador: %d\n", listSize(table[hash(z)]), contador);
-			/*if(z<9999 && contador > listSize(table[hash(z)])-1) {
-				g_print("teste\n");
-				contador = 0;
-				strcpy((char*)t9_str, "");
-			}*/
-			//g_print("antes -> x2: %d | y: %d\n", x2, y);
 			if(searchWord(t9_str, z) == 0)  {
-				g_print("t9_strlen: %ld\n", strlen((char*)t9_str));
 				int temp = strlen((char*)t9_str);
 				y = y - temp;
 				int i = y;
@@ -97,7 +71,6 @@ void button_clicked(GtkButton *button, gpointer data) {
 				z = 0;
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbutton), FALSE);
 			}
-			//g_print("depois -> caption: %s | x2: %d | y: %d\n", caption, x2, y);
 		} else {			
 			z = (z * 10) + getDigit(gtk_button_get_label(button));
 			searchWord(t9_str, z);
@@ -105,7 +78,6 @@ void button_clicked(GtkButton *button, gpointer data) {
 
 
 		y = ytemp;
-		//g_print("ytemp: %d | y: %d\n", ytemp, y);
 		while(t9_str[x2] != '\0') {
 			if(y>0 && caption[y-1]>192) {
 				caption[y--] = 0;
@@ -132,9 +104,7 @@ void button_clicked(GtkButton *button, gpointer data) {
 			caption[y] = '\0';
 			if(y != -1) y--;
 		} else if(getDigit(gtk_button_get_label(button)) == 0) {
-			//space
-			manual_str[0] = '\0';
-			caption[y++] = ' ';
+			caption[++y] = ' ';
 			ytemp = y;
 		} else if(gtk_button_get_label(button)[0] == '*') {
 			//Adicionar palavra ao dicionário
@@ -197,20 +167,6 @@ void button_clicked(GtkButton *button, gpointer data) {
 			} else {
 				caption[y] = button_str[x1];
 			}
-
-			/*if(button_str[x1]>127) {
-				manual_str[y2++] = button_str[x1++];
-				manual_str[y2] = button_str[x1];
-			} else {
-				manual_str[y2] = button_str[x1];
-			}
-
-			if(manual_str[x1]>127) {
-				caption[y++] = manual_str[x1++];
-				caption[y] = manual_str[x1];
-			} else {
-				caption[y] = manual_str[x1];
-			}*/
 
 			LastPressed = g_date_time_new_now_local();
 		}

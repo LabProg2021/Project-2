@@ -338,55 +338,40 @@ int searchWord(unsigned char* str, unsigned long x) {
 			list->word->str: amigas
 			*/
 			if(list == NULL) {
-				g_print("contador > 0 | h: %d | z: %ld\n", h, x);
-				g_print("\nlist->next = NULL\n\n");
 				contador = 0;
 				return 0;
 			} else {
-				//g_print("contador > 0 | list->next: %p | list->word->str: %s | h: %d | z: %ld\n", list->next, list->word->str, h, x);
 				if(x <= 9999) {
-					g_print("x<=9999\n");
 					list = list->next;
 					while(list != NULL && list->word->index >= 9999 && strcmp((char*)str, (char*)list->word->str) == 0) {
 						list = list->next;
 					}
 				} else {
-					g_print("x>9999\n");
 					list = list->next;
-					//g_print("antes -> list: %p | list->word->str: %s | list->word->index: %ld\n", list, list->word->str, list->word->index);
-					g_print("list->word->str: %s | list->word->index: %ld | x: %ld\n", list->word->str, list->word->index, x);
 					while(list != NULL) {
 						if(list->word->index != x) {
-							g_print("teste\n");
 							list = list->next;
 						} else {
 							break;
 						}
-						//g_print("depois -> list: %p | list->word->str: %s | list->word->index: %ld\n", list, list->word->str, list->word->index);
 					}
 				}
 			}
 			temp--;
 		}
 		if(x > 9999) {
-			//g_print("temp: %s | strLen: %d | digitCount: %d || x: %ld\n", list->word->str, strLen(list->word->str), digitCount(x), x);
 			
 			for (list = table[h]; list != NULL; list = list->next) {
 	            if(list->word->index == x) {
 	            	strcpy((char*)str, (char*)(list->word->str));
-	            	//g_print("temp_final: %s\n", str);
-	            	//g_print("list->word->str: %s\n", list->word->str);
 	                return 1;
 	            }
 	        }
 		} else {
 	    	unsigned char *temp = malloc(strlen((char*)list->word->str)*sizeof(unsigned char));
 	    	strcpy((char*)temp, (char*)(list->word->str));
-
-	    	//g_print("temp: %s | strLen: %d | digitCount: %d || x: %ld\n", temp, strLen(temp), digitCount(x), x);
 	    	
 	    	while(strLen(temp) > digitCount(x)) {
-	    		//g_print("temp--\n");
 	    		if(temp[strlen((char*)temp)-2] == 195) {
 	    			temp[strlen((char*)temp)-2] = '\0';
 	    			temp[strlen((char*)temp)-1] = '\0';
@@ -395,8 +380,6 @@ int searchWord(unsigned char* str, unsigned long x) {
 	    		}
 	    	}
 	    	strcpy((char*)str, (char*)temp);
-	    	//g_print("temp_final: %s\n", temp);
-	    	//g_print("list->word->str: %s\n", list->word->str);
 	    	free(temp);
 	    	return 1;
 	    }
