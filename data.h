@@ -39,7 +39,7 @@ int max(int x, int y);
 
 void readFile(char *filename1, char *filename2);
 
-int searchWord(unsigned char* caption, int x);
+int searchWord(unsigned char* caption, unsigned long x);
 
 int max(int x, int y);
 

@@ -11,7 +11,8 @@ int main(int argc, char *argv[]) {
 
 	readFile("cache.txt", "lusiadas.txt");
 
-	/*//print de teste
+	/*
+	//Print da tabela na consola (das i posições)
 	int i = 0;
 	while(i<(M-1)) {
 		if(table[i] != NULL) {
@@ -21,8 +22,8 @@ int main(int argc, char *argv[]) {
 		i++;
 	}
 	printf("\n");
-	//printList(table[2644]);
-	//*/
+	//
+	*/
 
 	ui(argc, argv);
 

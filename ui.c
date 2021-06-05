@@ -14,7 +14,7 @@ unsigned char manual_str[35]= "";
 int x1 = 0;
 int x2 = 0;
 int y = 0;
-int z = 0;
+unsigned long z = 0;
 int ytemp = 0;
 int y2 = 0;
 
@@ -48,10 +48,9 @@ void button_clicked(GtkButton *button, gpointer data) {
 		manual_str[0] = '\0';
 		if(gtk_button_get_label(button)[0] == '<') {
 			g_print("BACKSPACE\n");
+			g_print("y: %d\n", y);
 			z /= 10;
-
-			if(x2 > 0) x2--;
-			t9_str[x2] = '\0';
+			contador = 0;
 
 			if(y > 0) y--;
 			caption[y] = '\0';
@@ -60,28 +59,53 @@ void button_clicked(GtkButton *button, gpointer data) {
 				y--;
 				caption[y] = '\0';
 			}
-			g_print("%d\n", y);
-			//deleteChar(t9_str, &x2);
-			//deleteChar(caption, &y);
 
-			g_print("%s\n", caption);
+			int temp = strlen((char*)t9_str);
+			if(temp > 0) temp--;
+			t9_str[temp] = '\0';
+			g_print("y: %d\n", y);
+
 			searchWord(t9_str, z);
+			ytemp = y - strlen((char*)t9_str);
 		} else if(getDigit(gtk_button_get_label(button)) == 0) {
 			z = 0;
+			contador = 0;
 			x2 = 0;
 			t9_str[0] = '\0';
 			caption[y++] = ' ';
 			ytemp = y;
 		} else if(getDigit(gtk_button_get_label(button)) == 1) {
 			contador++;
-			searchWord(t9_str, z);
+			g_print("CYCLING -> listSize: %d || contador: %d\n", listSize(table[hash(z)]), contador);
+			/*if(z<9999 && contador > listSize(table[hash(z)])-1) {
+				g_print("teste\n");
+				contador = 0;
+				strcpy((char*)t9_str, "");
+			}*/
+			//g_print("antes -> x2: %d | y: %d\n", x2, y);
+			if(searchWord(t9_str, z) == 0)  {
+				g_print("t9_strlen: %ld\n", strlen((char*)t9_str));
+				int temp = strlen((char*)t9_str);
+				y = y - temp;
+				int i = y;
+				while(i < y + temp) {
+					caption[i] = '\0';
+					i++;
+				}
+				x2 = 0;
+				t9_str[x2] = '\0';
+				z = 0;
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(cbutton), FALSE);
+			}
+			//g_print("depois -> caption: %s | x2: %d | y: %d\n", caption, x2, y);
 		} else {			
 			z = (z * 10) + getDigit(gtk_button_get_label(button));
 			searchWord(t9_str, z);
-			g_print("x2_search_end: %d\n", x2);
 		}
 
+
 		y = ytemp;
+		//g_print("ytemp: %d | y: %d\n", ytemp, y);
 		while(t9_str[x2] != '\0') {
 			if(y>0 && caption[y-1]>192) {
 				caption[y--] = 0;
@@ -96,7 +120,6 @@ void button_clicked(GtkButton *button, gpointer data) {
 			y++;
 			x2++;
 		}
-		g_print("x2: %d\n", x2);
 		x2 = 0;
 	} else {
 		//Modo manual

@@ -212,6 +212,17 @@ void insertTable(Word *word) {
 	listSort(table[h]);
 }
 
+int listSize(List list) {
+    List subs = list -> next;
+    int counter = 0;
+
+    while(subs) {
+        counter++;
+        subs = subs -> next;
+    }
+    return counter;
+}
+
 int max(int x, int y) {
 	if(x>=y) return x;
 	else return y;
@@ -257,7 +268,6 @@ int strLen(unsigned char* str) {
 	int count = 0;
 	while(str[i] != '\0') {
 		if(str[i] == 195) {
-			g_print("195_str[%d]: %u ", i, str[i]);
 			i++;
 		}
 		count++;
@@ -275,7 +285,7 @@ int digitCount(int x) {
 	return count;
 }
 
-int searchWord(unsigned char* str, int x) {
+int searchWord(unsigned char* str, unsigned long x) {
     int h = hash(x);
 
     List list = table[h];
@@ -319,18 +329,48 @@ int searchWord(unsigned char* str, int x) {
     		g_print("Nothing to show.\n");
     	}
     } else {
-		while(contador > 0) {
-			if(list->next == NULL) {
-				str[0] = '\0';
+    	int temp = contador;
+		while(temp > 0) {
+			/*
+			list->word->str: amigo
+			list->word->str: amigos
+			list->word->str: amiga
+			list->word->str: amigas
+			*/
+			if(list == NULL) {
+				g_print("contador > 0 | h: %d | z: %ld\n", h, x);
+				g_print("\nlist->next = NULL\n\n");
 				contador = 0;
 				return 0;
 			} else {
-				list = list->next;
+				//g_print("contador > 0 | list->next: %p | list->word->str: %s | h: %d | z: %ld\n", list->next, list->word->str, h, x);
+				if(x <= 9999) {
+					g_print("x<=9999\n");
+					list = list->next;
+					while(list != NULL && list->word->index >= 9999 && strcmp((char*)str, (char*)list->word->str) == 0) {
+						list = list->next;
+					}
+				} else {
+					g_print("x>9999\n");
+					list = list->next;
+					//g_print("antes -> list: %p | list->word->str: %s | list->word->index: %ld\n", list, list->word->str, list->word->index);
+					g_print("list->word->str: %s | list->word->index: %ld | x: %ld\n", list->word->str, list->word->index, x);
+					while(list != NULL) {
+						if(list->word->index != x) {
+							g_print("teste\n");
+							list = list->next;
+						} else {
+							break;
+						}
+						//g_print("depois -> list: %p | list->word->str: %s | list->word->index: %ld\n", list, list->word->str, list->word->index);
+					}
+				}
 			}
-			contador--;
+			temp--;
 		}
 		if(x > 9999) {
-			g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", list->word->str, strLen(list->word->str), digitCount(x), x);
+			//g_print("temp: %s | strLen: %d | digitCount: %d || x: %ld\n", list->word->str, strLen(list->word->str), digitCount(x), x);
+			
 			for (list = table[h]; list != NULL; list = list->next) {
 	            if(list->word->index == x) {
 	            	strcpy((char*)str, (char*)(list->word->str));
@@ -343,7 +383,7 @@ int searchWord(unsigned char* str, int x) {
 	    	unsigned char *temp = malloc(strlen((char*)list->word->str)*sizeof(unsigned char));
 	    	strcpy((char*)temp, (char*)(list->word->str));
 
-	    	g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", temp, strLen(temp), digitCount(x), x);
+	    	//g_print("temp: %s | strLen: %d | digitCount: %d || x: %ld\n", temp, strLen(temp), digitCount(x), x);
 	    	
 	    	while(strLen(temp) > digitCount(x)) {
 	    		//g_print("temp--\n");
@@ -361,7 +401,6 @@ int searchWord(unsigned char* str, int x) {
 	    	return 1;
 	    }
     }
-    //g_print("table[%d] = NULL\n", h);
     return 0;
 }
 
