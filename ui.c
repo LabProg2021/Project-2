@@ -70,11 +70,10 @@ void button_clicked(GtkButton *button, gpointer data) {
 			t9_str[0] = '\0';
 			caption[y++] = ' ';
 			ytemp = y;
-		} else {
-			if(getDigit(gtk_button_get_label(button)) == 1) {
-				contador++;
-			}
-			
+		} else if(getDigit(gtk_button_get_label(button)) == 1) {
+			contador++;
+			searchWord(t9_str, z, &x2);
+		} else {			
 			z = (z * 10) + getDigit(gtk_button_get_label(button));
 			searchWord(t9_str, z, &x2);
 		}
@@ -106,13 +105,13 @@ void button_clicked(GtkButton *button, gpointer data) {
 			caption[y] = '\0';
 			if(y != -1) y--;
 		} else if(getDigit(gtk_button_get_label(button)) == 0) {
+			//space
 			manual_str[0] = '\0';
 			caption[y++] = ' ';
 			ytemp = y;
 		} else if(gtk_button_get_label(button)[0] == '*') {
+			//Adicionar palavra ao dicionário
 			//if(strlen())
-		} else if(gtk_button_get_label(button)[0] == '#') {
-			//incompleto
 		} else if(getDigit(gtk_button_get_label(button)) != 1) {
 			switch(getDigit(gtk_button_get_label(button))) {
 				case 2:

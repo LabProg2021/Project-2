@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
 		i++;
 	}
 	printf("\n");
+	//printList(table[2644]);
 	//*/
 
 	ui(argc, argv);

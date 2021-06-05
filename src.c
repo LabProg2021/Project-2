@@ -193,32 +193,22 @@ void insertTable(Word *word) {
 
 	toLower(word->str);
 
-	//printf("%d ", h);
 	List list;
-	//if(table[h] != NULL) printf("string2:%s ", table[h]->word->str);
 	for (list = table[h]; list != NULL; list = list->next) {
-		//printf("%p ", list);
-		//printf("%s ", list->word->str);
-		//printf("%s ", word->str);
 		if(strcmp((char*) list->word->str, (char*) word->str) == 0 ) {
-			//printf("list++ ");
 			break;
 		}
 	}
 	if(list != NULL) {
-		//printf("%s ", list->word->str);
 		deleteWord(word);
 		(list->word->count)++;
-		//printf("count:%d ", list->word->count);
 	} else {
 		word->count = 1;
 		List new = malloc(sizeof(ListNode));
 		new->word = word;
 		new->next = table[h];
 		table[h] = new;
-		//printf("string:%s ", table[h]->word->str);
 	}
-	//printf("\n");
 	listSort(table[h]);
 }
 
@@ -243,13 +233,9 @@ void readFile(char *filename1, char *filename2) {
 		}
 		int i = 0;
 		int j = 0;
-		//printf("\ntemp: %s\n", temp);
 		while(temp[max((i-1), 0)] != '\0') {
-			//printf("temp[i]='%c' ", temp[i]);
 			if(temp[i] == '\0' || isdigit(temp[i]) || temp[i] == ' ' || temp[i] == ',' || temp[i] == '(' || temp[i] == ')' || temp[i] == ';' || temp[i] == ':' || temp[i] == '.' || temp[i] == '"' || temp[i] == '-' || temp[i] == '?' || temp[i] == '!' || temp[i] == '\'') {
 				if(strlen((char*) word) != 0) {
-					//printf("\n%ld", getIndex(word));
-					//printf("\nword: '%s'\n", word);
 					insertTable(createWord(getIndex(word), word));
 				}
 				word[0] = '\0';
@@ -274,11 +260,9 @@ int strLen(unsigned char* str) {
 			g_print("195_str[%d]: %u ", i, str[i]);
 			i++;
 		}
-		//g_print("str[%d]: %c ", i, str[i]);
 		count++;
 		i++;
 	}
-	//g_print("count: %d\n", count);
 	return count;
 }
 
@@ -294,22 +278,36 @@ int digitCount(int x) {
 int searchWord(unsigned char* str, int x, int *x2) {
     int h = hash(x);
 
-    List find = table[h];
-    if(contador == 0) {
-    	if(find != NULL) {
-    		if(x > 9999) {
-    			g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", find->word->str, strLen(find->word->str), digitCount(x), x);
-    			for (find = table[h]; find != NULL; find = find->next) {
-		            if(find->word->index == x) {
-		            	strcpy((char*)str, (char*)(find->word->str));
-		            	x2++;
-		            	//g_print("temp_final: %s\n", str);
-		                return 1;
-		            }
-		        }
-    		}
-	    	unsigned char *temp = find->word->str;
+    List list = table[h];
+	if(list != NULL) {
+		while(contador > 0) {
+			if(list->next == NULL) {
+				str[0] = '\0';
+				x2 = 0;
+				contador = 0;
+				return 0;
+			} else {
+				list = list->next;
+			}
+			contador--;
+		}
+		if(x > 9999) {
+			g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", list->word->str, strLen(list->word->str), digitCount(x), x);
+			for (list = table[h]; list != NULL; list = list->next) {
+	            if(list->word->index == x) {
+	            	strcpy((char*)str, (char*)(list->word->str));
+	            	x2++;
+	            	//g_print("temp_final: %s\n", str);
+	            	//g_print("list->word->str: %s\n", list->word->str);
+	                return 1;
+	            }
+	        }
+		} else {
+	    	unsigned char *temp = malloc(strlen((char*)list->word->str)*sizeof(unsigned char));
+	    	strcpy((char*)temp, (char*)(list->word->str));
+
 	    	g_print("temp: %s | strLen: %d | digitCount: %d || x: %d\n", temp, strLen(temp), digitCount(x), x);
+	    	
 	    	while(strLen(temp) > digitCount(x)) {
 	    		//g_print("temp--\n");
 	    		if(temp[strlen((char*)temp)-2] == 195) {
@@ -322,84 +320,13 @@ int searchWord(unsigned char* str, int x, int *x2) {
 	    	strcpy((char*)str, (char*)temp);
 	    	x2++;
 	    	//g_print("temp_final: %s\n", temp);
+	    	//g_print("list->word->str: %s\n", list->word->str);
+	    	free(temp);
 	    	return 1;
 	    }
-    } else if(contador > 0) {
-        for (find = table[h]; find != NULL; find = find->next) {
-            if (find->word->index == x && contador > 0) {
-                contador--;
-            } else if (find->word->index == x && contador == 0) {
-            	strcpy((char*)str, (char*)(find->word->str));
-            	x2++;
-                return 1;
-            }
-        }
     }
     //g_print("table[%d] = NULL\n", h);
     return 0;
-
-
-
-
-    /*List find;
-    if(contador == 0) {
-        for (find = table[h]; find != NULL; find = find->next) {
-            if(find->word->index == x) {
-            	strcpy((char*)str, (char*)(find->word->str));
-                return 1;
-            }
-        }
-    } else if(contador > 0) {
-        find = table[h];
-        for (find = table[h]; find != NULL; find = find->next) {
-            if (find->word->index == x && contador > 0) {
-                contador--;
-            } else if (find->word->index == x && contador == 0) {
-            	strcpy((char*)str, (char*)(find->word->str));
-                return 1;
-            }
-        }
-    }
-    return 0;*/
-
-
-
-    /*if(x <= 9999) {
-        List find;
-        if(contador == 0 ) {
-            return (table[h]->word->str);
-        } else if(contador > 0) {
-            find = table[h];
-            while (contador > 0) {
-                if (find == NULL) {
-                    contador = 0;
-                    return ((unsigned char *)"END");
-                } else {
-                    contador--;
-                }
-                find = find->next;
-            }
-            return (find->word->str);
-        }
-    } else if(x > 9999) {
-        List find;
-        if(contador == 0) {
-            for (find = table[h]; find != NULL; find = find->next) {
-                if(find->word->index == x) {
-                    return (find->word->str);
-                }
-            }
-        } else if(contador > 0) {
-            find = table[h];
-            for (find = table[h]; find != NULL; find = find->next) {
-                if (find->word->index == x && contador > 0) {
-                    contador--;
-                } else if (find->word->index == x && contador == 0) {
-                    return (find->word->str);
-                }
-            }
-        }
-    }*/
 }
 
 void saveFile() {
